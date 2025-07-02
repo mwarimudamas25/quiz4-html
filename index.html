@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ikizamini No.4</title>
+<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+<script>
+  document.addEventListener("copy", function(e) {
+    e.preventDefault();
+    alert("Copying is disabled!");
+  });
+</script>
+
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+      font-size: 20px;
+      line-height: 1.5;
+      padding: 20px;
+      background: #fff;
+      margin: 0;
+      
+      
+    }
+    .custom-button {
+      width: 160px;
+      height: 50px;
+      background-color: blue;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 20px;
+    }
+    .custom-button:hover {
+      background-color: red;
+    }
+    #quiz-container {
+      display: none;
+      padding: 20px;
+      background: #fff;
+      width: 100vw;
+      box-sizing: border-box;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .question p {
+      font-weight: bold;
+    }
+    .options label {
+      font-weight: normal;
+      display: block;
+    }
+    .submit-button, .review-button, .home-button {
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    .submit-button { background-color: blue; color: white; }
+    .submit-button:hover { background-color: red; }
+    .review-button { background-color: green; color: white; }
+    .home-button:hover { background-color: darkred; }
+    .review-button:hover { background-color: red; }
+    #result-message {
+      margin-top: 20px;
+      font-weight: bold;
+   }
+    .home-button {
+      background-color: green;
+      color: white;
+      margin-top: 10px;
+   }
+   
+    #loadingSpinner {
+      display: none;
+      margin: 20px auto;
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #007bff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+     .warning-text {
+    color: red;
+    font-weight: bold;
+    animation: shake 0.5s ease-in-out;
+  }
+
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+    }
+  </style>
+</head>
+<body>
+  <h2>ITOZE GUSUBIZA IBIBAZO UTSINDIRE PROVISOIRE MU GIHE GITO!</h2>
+  <button class="custom-button" onclick="promptPassword()">Tangira Ikizami Cya 4</button>
+<!-- Password Modal -->
+<div id="password-modal">
+  <div class="modal-content">
+    <span onclick="closeModal()" class="close-btn">&times;</span>
+ <h3>SHYIRAMO KODE IKWEMERERA GUKORA IKI KIZAMI</h3>
+<input type="password" id="password-input" placeholder="ANDIKA IYO KODE HANO">
+<br><br>
+<button id="confirmBtn" onclick="checkPassword()">EMEZA NYUMA YO KWANDIKAMO KODE</button>
+<br><br>
+<button id="sectionBtn1" onclick="exitToSection1()">KANDA HANO USABE KODE</button>
+<br><br>
+<button id="sectionBtn2" onclick="exitToSection2()">KANDA HANO UBANZE WIHUGURE</button>
+<br><br>
+
+<button id="exitGoBackBtn" onclick="closeModal()">SOHOKA NIBA UDASHAKA GUKOMEZA</button>   
+   
+  </div>
+</div>
+<style>
+  #password-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  overflow: auto; /* Enable scrolling if content too long */
+  }
+
+  .modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+  }
+ .modal-content input {
+    width: 90%;
+    padding: 10px;
+    font-size: 10px;
+  }
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 2px;
+    width: 100%;
+  }
+
+  #confirmBtn {
+    background-color: #007bff;
+  }
+  #confirmBtn:hover {
+    background-color: #0056b3;
+  }
+    #sectionBtn1 {
+    background-color: green;
+  }
+  #sectionBtn1:hover {
+    background-color: #006400;
+  }
+  #sectionBtn2 {
+    background-color: gray;
+ }
+ #sectionBtn2:hover {
+    background-color: #555;
+ }
+  #exitGoBackBtn {
+    background-color: darkred;
+ }
+  #exitGoBackBtn:hover {
+    background-color: #b30000;
+  }
+
+  .close-btn {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+</style>
+
+  <div id="quiz-container">
+<p id="quiz-started-msg" class="warning-text">Ikizami Cyamaze Gutangira...</p>
+<div id="timer" style="font-weight: bold; margin-bottom: 20px; color: red;">
+  Igihe Gisigaye: 20:00
+</div>
+<p>Ikizami Kigizwe n'Ibibazo 20, Buri Kibazo Gifite Inota 1, Kikamara Iminota 20. Amahirwe Masa!!!</p>
+    <div id="question-container"></div>
+    <button class="submit-button" onclick="submitQuiz()">OHEREZA UBONE AMANOTA YAWE</button>
+    <button class="home-button" onclick="goToHome()">SOHOKA/SUBIRA KU BIZAMI</button>
+    <div id="loadingSpinner"></div>
+    <div id="result-message" style="display: flex; align-items: center; gap: 10px;"></div>
+    <div class="bottom-buttons">
+      <button class="review-button" onclick="reviewAnswers()" style="display:none;">REBA IBISUBIZO BYOSE</button>
+    </div>
+    </div>
+  </div>
+  <script>
+    let password = "45522";
+    let quizStarted = false;
+    let currentQuestion = 0;
+    let timerInterval;
+    let timeLeft = 20 * 60;
+    let answers = Array(20).fill(null);
+    let submitted = false;
+
+const questions = [
+  {
+    question: "1. Amabwiriza rusange agenga imihanda n'uburyo bwo kuyigendamo mu Rwanda yashyizweho muri:",
+    options: ["a) 1992", "b) 2002", "c) 1987", "d) 1998"],
+    correct: 1
+  },
+  {
+    question: "2. Amabwiriza rusange agenga imihanda n'uburyo bwo kuyigendamo agenga uburyo bwo kugenda mu nzira nyabagendwa bwerekeye:",
+    options: ["a) Abanyamaguru", "b) Inyamaswa ziba mu ishyamba", "c) Ibinyabiziga", "d) A na C ni ibisubizo by’ukuri"],
+    correct: 3
+  },
+  {
+    question: "3. Ijambo 'Inzira nyabagendwa' risobanura kimwe muri ibi bikurikira:",
+    options: ["a) Ahantu imodoka zihagarara gusa", "b) Ahantu hose abantu nyamwinshi bahurira no kugenda ku butaka", "c) Imihanda minini gusa", "d) Utuyira tw’imodoka mu mujyi no mu cyaro"],
+    correct: 1
+  },
+  {
+    question: "4. Ijambo 'Umuhanda' risobanura:",
+    options: ["a) Ahantu hose abantu banyura cg ahantu hose hateretse ibinyabiziga", "b) Igice cy’inzira nyabagendwa kigendwamo n’ibinyabiziga", "c) Inzira z’abanyamaguru gusa", "d) Nta gisubizo cy’ukuri kirimo"],
+    correct: 1
+  },
+  {
+    question: "5. Ijambo 'Inzira y'ibinyabiziga' risobanura:",
+    options: ["a) Umuhanda n’inzira ziwukikije", "b) Ahantu hagendwa n’abanyamaguru gusa", "c) Ahantu imodoka zihagarara", "d) Utuyira duto two mu mujyi"],
+    correct: 0
+  },
+  {
+    question: "6. Iyo bavuze Igisate cy'umuhanda wumva kimwe muri ibi bikurikira:",
+    options: ["a) Igice cy’umuhanda kigenewe abanyamaguru gusa", "b) Ahantu imodoka zihagarara", "c) Igice cy’umuhanda cyagenewe kugendwamo n’ibinyabiziga binini bibangikanye", "d) Umurongo ugaragaza aho umuhanda urangirira"],
+    correct: 2
+  },
+  {
+    question: "7. Ijambo 'Agahanda k'amagare' risobanura iki:",
+    options: ["a) Igice cy’inzira nyabagendwa cyagenewe kunyurwamo n’amagare na velomoteri", "b) Umuhanda wose ugenewe ibinyabiziga byose", "c) Ahantu imodoka zihagarara", "d) Igice cy’umuhanda cyagenewe abanyamaguru"],
+    correct: 0
+  },
+  {
+    question: "8. Amagambo 'Isangano' na 'Inkomane' bivuga:",
+    options: ["a) Ahantu imodoka ziparika", "b) Ahantu hose imihanda ihurira cyangwa aho umuhanda usukira mu wundi", "c) Umuhanda munini ugabanya imijyi ibiri", "d) Igice cy’umuhanda cyagenewe abanyamaguru"],
+    correct: 1
+  },
+  {
+    question: "9. Ijambo 'Akayira' risobanura iki?",
+    options: ["a) Ahantu imodoka zihagarara", "b) Umuhanda munini ugenewe ibinyabiziga byose", "c) Inzira nyabagendwa ifunganye yagenewe gusa abanyamaguru cyangwa ibinyabiziga bigendera ku biziga bibiri", "d) Inzira ya gari ya moshi"],
+    correct: 2
+  },
+  {
+    question: "10. Inzira y’igitaka ni:",
+    options: ["a) Inzira igenewe abantu gusa", "b) Inzira yabugenewe n’abanyamaguru gusa", "c) Inzira nyabagendwa yagutse kurusha akayira ariko itari iy’ibinyabiziga bibiri", "d) Inzira ikoreshwa gusa mu gihe cy’imvura"],
+    correct: 2
+  },
+  {
+    question: "11. Urusisiro ni:",
+    options: ["a) Ahantu hagaragaramo amazu gusa nta mihanda irimo", "b) Ahantu hari amazu atandukanye yegeranye cyangwa afatanye hatagaragazwa n’ibyapa by’aho hantu", "c) Ahantu hatuye abantu bacye cyane hatagira amazu afatanye", "d) Nta gisubizo cy’ukuri kirimo"],
+    correct: 3
+  },
+  {
+    question: "12. Ijambo Umuyobozi risobanura:",
+    options: ["a) Umuntu uyobora abandi mu kazi ka Leta", "b) Umuntu wese utwaye ikinyabiziga cyangwa uyobora inyamaswa", "c) Umuntu wicaye mu modoka atari umushoferi", "d) Umuntu ucunga umutekano mu muhanda"],
+    correct: 1
+  },
+  {
+    question: "13. Iyo umugenzi ahagaze, umukozi ubifitiye ububasha ni ngombwa ko buri gihe aba afite ibimenyetso:",
+    options: ["a) Yego", "b) Oya", "c) —", "d) —"],
+    correct: 1
+  },
+  {
+    question: "14. Ugendeye ku gisobanuro k’ijambo ikinyabiziga, Indogobe cyangwa ifarashi ikurura ikinyabiziga si ikinyabiziga:",
+    options: ["a) Yego", "b) Oya", "c) —", "d) —"],
+    correct: 1
+  },
+  {
+    question: "15. Tracteur cg umutraktori, imashini ikoreshwa mu buhinzi ifatwa nk’ikinyabiziga:",
+    options: ["a) Yego", "b) Oya", "c) —", "d) —"],
+    correct: 0
+  },
+  {
+    question: "16. Ikinyamitende kigomba kugira iki muri ibi bikurikira:",
+    options: ["a) Moteri ikoresha lisansi", "b) Ibiziga byibuze kimwe kandi kigendeshwa n’imbaraga z’abantu", "c) Moteri y’amashanyarazi", "d) Imodoka igendeshwa na essence"],
+    correct: 1
+  },
+  {
+    question: "17. Ni ikihe kinyabiziga gishobora no kuba Ikinyamitende muri ibi?:",
+    options: ["a) Moto ifite moteri", "b) Igare ry’abafite ubumuga", "c) Igare rigendera ku biziga bibiri rikoreshejwe n’amaguru", "d) Moto ifite imitende itatu"],
+    correct: 2
+  },
+  {
+    question: "18. Ibi bikurikira ni ibinyabiziga ukuyemo:",
+    options: ["a) Imodoka (Car)", "b) Moto (Motorcycle)", "c) Ibimasa bihinga (Draught cattle)", "d) Igare (Bicycle)"],
+    correct: 2
+  },
+  {
+    question: "19. Ijambo Igare rivuga:",
+    options: ["a) Ikinyamitende gifite ibiziga bibiri cg bitatu", "b) Ikinyamitende gifite ibiziga bibiri gusa", "c) Ikinyamitende gifite moteri", "d) Nta gisubizo cy’ukuri kirimo"],
+    correct: 1
+  },
+  {
+    question: "20. Velomoteri:",
+    options: ["a) Ni ikinyabiziga gifite ibiziga bibiri byonyine", "b) Ni ikinyabiziga kitarengeje santimetero kibe 50", "c) Yihuta kurenza Km 100 mu isaha", "d) A na B ni ibisubizo by’ukuri"],
+    correct: 3
+  }
+];
+
+
+  function promptPassword() {
+  if (quizStarted) {
+    alert("Ikizami Cyamaze Gutangira! kanda OK ukomeze cg ujye kuri SOHOKA/SUBIRA KU BIZAMI usubire ku bizami wongere utangire");
+    return;
+  }
+  document.getElementById("password-modal").style.display = "block";
+}
+
+function checkPassword() {
+  const inputField = document.getElementById("password-input");
+  const input = inputField.value;
+
+  if (input === password) {
+    document.getElementById("password-modal").style.display = "none";
+    document.getElementById("quiz-container").style.display = "block";
+    quizStarted = true;
+    renderQuestions();
+    startTimer();
+  } else {
+    alert("Andikamo Kode Ya Nyayo Cg Ujye ahanditse KANDA HANO USABE KODE TUGUFASHE!");
+    inputField.value = "";       // isiba automatic
+    inputField.focus();          // cursor isubira mu kibuga
+  }
+}
+    function renderQuestions() {
+      const container = document.getElementById("question-container");
+      container.innerHTML = "";
+      questions.forEach((q, index) => {
+        const html = `<div class="question">
+          <p>${q.question}</p>
+          <div class="options">
+            ${q.options.map((opt, i) => `
+              <label>
+                <input type="radio" name="q${index}" value="${i}" ${answers[index] === i ? "checked" : ""} onclick="saveAnswer(${index}, ${i})"> ${opt}
+              </label>`).join("")}
+          </div>
+        </div>`;
+        container.innerHTML += html;
+      });
+    }
+
+    function saveAnswer(qIndex, optIndex) {
+      answers[qIndex] = optIndex;
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        if (--timeLeft <= 0) {
+          clearInterval(timerInterval);
+          submitQuiz();
+        }
+        const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
+        const seconds = String(timeLeft % 60).padStart(2, "0");
+        document.getElementById("timer").textContent = `Igihe Gisigaye: ${minutes}:${seconds}`;
+      }, 1000);
+    }
+
+    function submitQuiz() {
+      if (submitted) return alert("Ikizami Cyamaze Koherezwa, Kanda kuri OK ujye kuri SOHOKA/SUBIRA KU BIZAMI wongere utangire !");
+      submitted = true;
+      let score = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (answers[i] === questions[i].correct) score++;
+      }
+          document.getElementById("loadingSpinner").style.display = "block";
+    setTimeout(() => {
+      document.getElementById("loadingSpinner").style.display = "none";
+      document.querySelector(".review-button").style.display = "inline-block";
+      const resultMessage = document.getElementById("result-message");
+      resultMessage.innerHTML =
+        score >= 12
+          ? `<span style='color:green'>Wabonye Amanota ${score}/20<br>Watsinze, Komereza Aho!</span>`
+          : `<span style='color:red'>Wabonye Amanota${score}/20<br>Watsinzwe, Ukeneye Kwihugura Bihagije!</span>`;
+      resultMessage.scrollIntoView({ behavior: "smooth" });
+    }, 5000);
+  }
+    function reviewAnswers() {
+  let output = "";
+  questions.forEach((q, i) => {
+    const correct = q.correct;
+    const user = answers[i];
+    output += `<p><strong>Ikibazo ${i + 1}:</strong> ${q.question}<br>`;
+    q.options.forEach((opt, j) => {
+      const status = j === correct ? "✅" : (j === user ? "❌" : "");
+      output += `${status} ${opt}<br>`;
+    });
+    output += `</p>`;
+  });
+  document.getElementById("question-container").innerHTML = output;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+}
+setTimeout(function() {
+  const msg = document.getElementById("quiz-started-msg");
+  if (msg) msg.style.display = "none";
+}, 120000); // 2 minutes
+
+function exitToSection1() {
+ document.getElementById("password-modal").style.display = "none";
+  window.location.href = "https://mwarimudamas.wixsite.com/mwarimudamas#contact-us";
+}
+
+function exitToSection2() {
+  document.getElementById("password-modal").style.display = "none";
+  window.location.href = "https://mwarimudamas.wixsite.com/mwarimudamas#lessons";
+}
+
+function closeModal() {
+  const confirmExit = confirm("Urashaka Gusubira Inyuma? Kanda OK niba Udakomeje Ikizamini cg CANCEL ukomeze ikizami.");
+  if (confirmExit) {
+    document.getElementById('password-modal').style.display = 'none';
+    document.getElementById('start-quiz-btn').style.display = 'inline-block';
+    document.getElementById('password-input').value = "";
+  }
+}
+
+function goToHome() {
+   window.location.href = "https://mwarimudamas.wixsite.com/mwarimudamas#quizzes";
+    }
+  </script>
+</body>
+</html>
